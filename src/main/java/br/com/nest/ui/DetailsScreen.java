@@ -1,18 +1,29 @@
 package br.com.nest.ui;
 
-import br.com.nest.model.ChildProfile;
-import br.com.nest.model.Platforms;
-import br.com.nest.model.UsageSession;
-import br.com.nest.service.NestService;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.table.DefaultTableModel;
+
+import br.com.nest.model.ChildProfile;
+import br.com.nest.model.Platforms;
+import br.com.nest.model.UsageSession;
+import br.com.nest.service.NestService;
 
 /** Detalhes por serviço/período e lançamento manual de uso. */
 class DetailsScreen extends Screen {

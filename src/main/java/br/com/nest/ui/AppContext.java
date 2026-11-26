@@ -1,9 +1,9 @@
 package br.com.nest.ui;
 
+import java.awt.Component;
+
 import br.com.nest.model.ChildProfile;
 import br.com.nest.service.NestService;
-
-import java.awt.*;
 
 /** O que cada tela precisa saber da janela principal. */
 interface AppContext {

@@ -1,17 +1,24 @@
 package br.com.nest.ui;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
 import br.com.nest.model.ChildProfile;
 import br.com.nest.model.PlatformLink;
 import br.com.nest.model.Platforms;
 import br.com.nest.model.SettingRequest;
 import br.com.nest.service.NestService;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-
-/** Configurações parentais (simuladas), atalhos para os serviços originais e nota de privacidade. */
+/** Configurações clean de limites, horários e acesso aos serviços originais. */
 class SettingsScreen extends Screen {
     private final JComboBox<String> platformBox = new JComboBox<>();
     private final JComboBox<String> settingBox =
@@ -22,24 +29,26 @@ class SettingsScreen extends Screen {
 
     SettingsScreen(AppContext ctx) {
         super(ctx);
+        Ui.styleInput(value);
         add(Ui.title("Configurações"), BorderLayout.NORTH);
 
         JPanel form = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
         form.setOpaque(false);
-        form.add(new JLabel("Serviço:"));
+        form.add(Ui.fieldLabel("Serviço"));
         form.add(platformBox);
-        form.add(new JLabel("Configuração:"));
+        form.add(Ui.fieldLabel("Regra"));
         form.add(settingBox);
-        form.add(new JLabel("Valor:"));
+        form.add(Ui.fieldLabel("Valor"));
         form.add(value);
-        JButton send = Ui.primaryButton("Solicitar alteração (simulada)");
+
+        JButton send = Ui.primaryButton("Salvar solicitação");
         send.addActionListener(e -> Ui.safe(this, this::request));
         form.add(send);
         settingBox.addActionListener(e -> updateHint());
 
-        JPanel requestBox = new JPanel(new BorderLayout(0, 6));
+        JPanel requestBox = new JPanel(new BorderLayout(0, 8));
         requestBox.setOpaque(false);
-        JPanel head = new JPanel(new BorderLayout());
+        JPanel head = new JPanel(new BorderLayout(0, 4));
         head.setOpaque(false);
         head.add(form, BorderLayout.NORTH);
         head.add(hint, BorderLayout.SOUTH);
@@ -54,18 +63,11 @@ class SettingsScreen extends Screen {
             b.addActionListener(e -> OriginalLinks.open(this, p));
             originals.add(b);
         }
-        JPanel privacy = new JPanel(new BorderLayout(0, 6));
-        privacy.setOpaque(false);
-        privacy.add(originals, BorderLayout.NORTH);
-        JLabel note = Ui.muted("<html><b>Privacidade:</b> os dados ficam apenas neste computador (arquivo nest.db). "
-                + "O Nest não guarda senhas de serviços externos. Use somente dados fictícios neste protótipo — "
-                + "dados reais de menores exigem consentimento, criptografia e adequação à LGPD/ECA Digital.</html>");
-        privacy.add(note, BorderLayout.SOUTH);
 
-        JPanel body = new JPanel(new BorderLayout(0, 10));
+        JPanel body = new JPanel(new BorderLayout(0, 12));
         body.setOpaque(false);
-        body.add(Ui.card("Solicitar alteração de configuração", requestBox), BorderLayout.CENTER);
-        body.add(Ui.card("Gerenciar no serviço original", privacy), BorderLayout.SOUTH);
+        body.add(Ui.card("Limites e horários", requestBox), BorderLayout.CENTER);
+        body.add(Ui.card("Serviços originais", originals), BorderLayout.SOUTH);
         add(body, BorderLayout.CENTER);
         updateHint();
     }
@@ -73,9 +75,8 @@ class SettingsScreen extends Screen {
     private void updateHint() {
         boolean limit = NestService.SETTING_DAILY_LIMIT.equals(settingBox.getSelectedItem());
         hint.setText(limit
-                ? "Ex.: 90. O limite fica salvo no Nest e gera alertas quando excedido; NÃO é enviado ao fabricante. "
-                + "Para aplicar no serviço, use o botão de abrir o serviço original."
-                : "Ex.: 21:00-07:00. A solicitação é apenas registrada (SIMULADA); nada é enviado ao fabricante.");
+                ? "Ex.: 90 (minutos por dia). Gera alerta ao ultrapassar."
+                : "Ex.: 21:00-07:00 (horário de descanso).");
     }
 
     private void request() {
@@ -95,7 +96,8 @@ class SettingsScreen extends Screen {
         platformBox.addItem(NestService.ALL);
         List<PlatformLink> links = ctx.service().listLinks(c.id());
         links.forEach(l -> platformBox.addItem(l.platform()));
-        for (SettingRequest r : ctx.service().listRequests(c.id()))
+        for (SettingRequest r : ctx.service().listRequests(c.id())) {
             model.addRow(new Object[]{Ui.formatTs(r.createdAt()), r.platform(), r.setting(), r.value(), r.status()});
+        }
     }
 }

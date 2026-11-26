@@ -1,11 +1,8 @@
 package br.com.nest.ui;
 
-import br.com.nest.model.ChildProfile;
-import br.com.nest.model.UsageSession;
-import br.com.nest.service.NestService;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +12,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import br.com.nest.model.ChildProfile;
+import br.com.nest.model.UsageSession;
+import br.com.nest.service.NestService;
 
 /** Relatórios e gráficos: uso por dia, distribuição por serviço, comparação com o período anterior e exportação CSV. */
 class ReportsScreen extends Screen {

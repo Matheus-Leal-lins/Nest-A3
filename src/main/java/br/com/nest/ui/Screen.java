@@ -1,7 +1,10 @@
 package br.com.nest.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 /** Base das telas: mostra um aviso quando não há perfil selecionado. */
 abstract class Screen extends JPanel {

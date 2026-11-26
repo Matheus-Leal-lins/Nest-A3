@@ -1,11 +1,14 @@
 package br.com.nest.ui;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+
 import br.com.nest.model.Alert;
 import br.com.nest.model.ChildProfile;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 /** Central de alertas gerados pelo Nest (limites diários excedidos). */
 class AlertsScreen extends Screen {

@@ -1,10 +1,10 @@
 package br.com.nest;
 
+import javax.swing.SwingUtilities;
+
 import br.com.nest.model.Guardian;
 import br.com.nest.ui.LoginFrame;
 import br.com.nest.ui.NestFrame;
-
-import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {

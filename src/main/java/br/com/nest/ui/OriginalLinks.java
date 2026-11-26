@@ -1,10 +1,12 @@
 package br.com.nest.ui;
 
-import br.com.nest.model.Platforms;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Desktop;
 import java.net.URI;
+
+import javax.swing.JOptionPane;
+
+import br.com.nest.model.Platforms;
 
 /** Abre o site oficial do controle parental original (usado quando o Nest não consegue alterar a configuração). */
 final class OriginalLinks {
