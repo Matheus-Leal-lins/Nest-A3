@@ -68,6 +68,10 @@ class ServicesScreen extends Screen {
         add(south, BorderLayout.SOUTH);
     }
 
+    private static boolean isOtherOption(String value) {
+        return "Outra".equalsIgnoreCase(value) || "Outro".equalsIgnoreCase(value);
+    }
+
     private static String specOf(String platform) {
         return SPECS.getOrDefault(platform, "Controle de tempo e uso da plataforma.");
     }
@@ -87,22 +91,58 @@ class ServicesScreen extends Screen {
         JComboBox<String> platform = new JComboBox<>(Platforms.names());
         Ui.styleComboBox(platform);
         JLabel specPreview = Ui.muted(specOf((String) platform.getSelectedItem()));
-        platform.addActionListener(e -> specPreview.setText(specOf((String) platform.getSelectedItem())));
+
+        JLabel customLabel = Ui.fieldLabel("Qual serviço?");
+        JTextField customName = new JTextField(20);
+        Ui.styleInput(customName);
+
+        JPanel customBox = new JPanel(new GridLayout(0, 1, 4, 4));
+        customBox.setOpaque(false);
+        customBox.add(customLabel);
+        customBox.add(customName);
 
         JTextField label = new JTextField(20);
         Ui.styleInput(label);
 
         JPanel form = new JPanel(new GridLayout(0, 1, 5, 5));
+        form.setOpaque(false);
         form.add(Ui.fieldLabel("Serviço"));
         form.add(platform);
         form.add(specPreview);
+        form.add(customBox);
         form.add(Ui.fieldLabel("Rótulo da conta (e-mail ou apelido)"));
         form.add(label);
+
+        Runnable toggleCustom = () -> {
+            String selected = (String) platform.getSelectedItem();
+            specPreview.setText(specOf(selected));
+            boolean showCustom = isOtherOption(selected);
+            customBox.setVisible(showCustom);
+            if (!showCustom) {
+                customName.setText("");
+            }
+            Ui.applyTheme(form);
+            java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(form);
+            if (win != null) {
+                win.pack();
+                win.setLocationRelativeTo(this);
+            }
+        };
+
+        platform.addActionListener(e -> toggleCustom.run());
         Ui.applyTheme(form);
+        toggleCustom.run();
 
         if (JOptionPane.showConfirmDialog(this, form, "Vincular serviço",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) return;
-        ctx.service().linkPlatform(c.id(), (String) platform.getSelectedItem(), label.getText());
+
+        String selected = (String) platform.getSelectedItem();
+        String finalPlatform = isOtherOption(selected) ? customName.getText().trim() : selected;
+        if (finalPlatform == null || finalPlatform.isBlank()) {
+            throw new IllegalArgumentException("Informe o nome do serviço.");
+        }
+
+        ctx.service().linkPlatform(c.id(), finalPlatform, label.getText().trim());
         ctx.refreshAll();
         Ui.applyTheme(ctx.frame());
     }

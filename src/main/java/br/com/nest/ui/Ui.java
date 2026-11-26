@@ -25,6 +25,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.Painter;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -63,15 +64,15 @@ final class Ui {
 
     // Constantes mantidas para compatibilidade
     static final Color PRIMARY = L_PRIMARY;
-    static final Color PRIMARY_DARK = L_PRIMARY_DARK;
-    static final Color PRIMARY_SOFT = L_PRIMARY_SOFT;
+ @SuppressWarnings("unused") static final Color PRIMARY_DARK = L_PRIMARY_DARK; 
+ @SuppressWarnings("unused")  static final Color PRIMARY_SOFT = L_PRIMARY_SOFT;
     static final Color ACCENT = L_ACCENT;
-    static final Color BG = L_BG;
-    static final Color CARD = L_CARD;
-    static final Color BORDER = L_BORDER;
-    static final Color TEXT = L_TEXT;
+ @SuppressWarnings("unused")  static final Color BG = L_BG;
+ @SuppressWarnings("unused")   static final Color CARD = L_CARD;
+ @SuppressWarnings("unused")   static final Color BORDER = L_BORDER;
+ @SuppressWarnings("unused")   static final Color TEXT = L_TEXT;
     static final Color MUTED = L_MUTED;
-    static final Color DANGER = L_DANGER;
+ @SuppressWarnings("unused")   static final Color DANGER = L_DANGER;
 
     static final DateTimeFormatter BR_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     static final DateTimeFormatter TS_IN = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -144,6 +145,11 @@ final class Ui {
 
         UIManager.put("OptionPane.background", bg);
         UIManager.put("OptionPane.messageForeground", text);
+        UIManager.put("OptionPane[Enabled].backgroundPainter",
+                (Painter<JComponent>) (g, c, w, h) -> {
+                    g.setColor(bg());
+                    g.fillRect(0, 0, w, h);
+                });
 
         UIManager.put("Panel.background", bg);
         UIManager.put("Label.foreground", text);
@@ -469,13 +475,38 @@ final class Ui {
         return t;
     }
 
+    private static JPanel messageBox(String message) {
+        JLabel label = new JLabel("<html><body style='width: 360px;'>"
+                + escapeHtml(message).replace("\n", "<br>") + "</body></html>");
+        label.setForeground(text());
+        JPanel box = new JPanel(new BorderLayout());
+        box.setOpaque(true);
+        box.setBackground(bg());
+        box.add(label, BorderLayout.CENTER);
+        return box;
+    }
+
+    private static String escapeHtml(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    }
+
+    static void info(Component parent, String title, String message) {
+        syncUiManagerDefaults();
+        JOptionPane.showMessageDialog(parent, messageBox(message), title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
     static void safe(Component parent, Runnable action) {
         try {
             action.run();
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(parent, ex.getMessage(), "Atenção", JOptionPane.WARNING_MESSAGE);
+            syncUiManagerDefaults();
+            JOptionPane.showMessageDialog(parent, messageBox(ex.getMessage()),
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(parent, ex.getMessage() == null ? ex.toString() : ex.getMessage(),
+            syncUiManagerDefaults();
+            String msg = ex.getMessage() == null ? ex.toString() : ex.getMessage();
+            JOptionPane.showMessageDialog(parent, messageBox(msg),
                     "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
