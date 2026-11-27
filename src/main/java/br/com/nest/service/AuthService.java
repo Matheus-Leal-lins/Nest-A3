@@ -1,16 +1,21 @@
 package br.com.nest.service;
 
-import br.com.nest.model.Guardian;
-import br.com.nest.repository.Database;
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Base64;
 import java.util.Optional;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
+import br.com.nest.model.Guardian;
+import br.com.nest.repository.Database;
 
 /** Cadastro e login locais do responsável. Senhas são guardadas com PBKDF2 + sal (nunca em texto puro). */
 public class AuthService {
@@ -45,9 +50,10 @@ public class AuthService {
             }
             return new Guardian(id, user);
         } catch (SQLException e) {
+            e.printStackTrace();
             if (e.getMessage() != null && e.getMessage().contains("UNIQUE"))
                 throw new IllegalArgumentException("Este usuário já existe.");
-            throw new IllegalStateException("Não foi possível criar a conta.", e);
+            throw new IllegalStateException("Não foi possível criar a conta: " + e.getMessage(), e);
         }
     }
 
@@ -65,7 +71,8 @@ public class AuthService {
                 return Optional.of(new Guardian(r.getInt("id"), username.trim().toLowerCase()));
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Não foi possível validar o login.", e);
+            e.printStackTrace();
+            throw new IllegalStateException("Não foi possível validar o login: " + e.getMessage(), e);
         }
     }
 
