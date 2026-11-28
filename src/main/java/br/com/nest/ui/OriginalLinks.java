@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 import br.com.nest.model.Platforms;
 
-/** Abre o site oficial do controle parental original (usado quando o Nest não consegue alterar a configuração). */
+
 final class OriginalLinks {
     private OriginalLinks() {}
 

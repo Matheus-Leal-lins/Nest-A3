@@ -18,7 +18,7 @@ import br.com.nest.model.Platforms;
 import br.com.nest.model.SettingRequest;
 import br.com.nest.service.NestService;
 
-/** Configurações clean de limites, horários e acesso aos serviços originais. */
+
 class SettingsScreen extends Screen {
     private final JComboBox<String> platformBox = new JComboBox<>();
     private final JComboBox<String> settingBox =

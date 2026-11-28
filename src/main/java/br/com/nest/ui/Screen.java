@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-/** Base das telas: mostra um aviso quando não há perfil selecionado. */
+
 abstract class Screen extends JPanel {
     protected final AppContext ctx;
 

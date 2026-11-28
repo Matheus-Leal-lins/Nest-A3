@@ -1,13 +1,13 @@
 package br.com.nest.service;
 
-import br.com.nest.model.ChildProfile;
-import br.com.nest.model.Platforms;
-import br.com.nest.model.PlatformLink;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+
+import br.com.nest.model.ChildProfile;
+import br.com.nest.model.PlatformLink;
+import br.com.nest.model.Platforms;
 
 /**
  * Simula a sincronização com os controles parentais. Os números são gerados localmente (determinísticos por
@@ -20,7 +20,7 @@ public class DemoService {
         this.service = service;
     }
 
-    /** Gera os últimos 7 dias de uso para cada plataforma vinculada ao perfil. Retorna quantas plataformas foram sincronizadas. */
+
     public int sync(int childId) {
         List<PlatformLink> links = service.listLinks(childId);
         LocalDate today = LocalDate.now();
@@ -36,7 +36,7 @@ public class DemoService {
         return links.size();
     }
 
-    /** Cria perfis de exemplo já vinculados, com limites e dados simulados, para demonstrar o MVP. */
+
     public void loadDemoFamily() {
         ChildProfile ana = service.addChild("Ana", 12);
         ChildProfile bia = service.addChild("Bia", 9);

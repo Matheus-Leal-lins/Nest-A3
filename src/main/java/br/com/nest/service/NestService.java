@@ -1,18 +1,26 @@
 package br.com.nest.service;
 
-import br.com.nest.model.*;
-import br.com.nest.repository.Database;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Regras de negócio do Nest para um responsável: perfis, vínculos, uso, relatórios, alertas e
- * solicitações de configuração. Todos os dados pertencem ao responsável informado no construtor.
- */
+import br.com.nest.model.Alert;
+import br.com.nest.model.ChildProfile;
+import br.com.nest.model.PlatformLink;
+import br.com.nest.model.SettingRequest;
+import br.com.nest.model.UsageSession;
+import br.com.nest.repository.Database;
+
+
 public class NestService {
     public static final String ALL = "Todas";
     public static final String SETTING_DAILY_LIMIT = "Limite diário (minutos)";
@@ -32,7 +40,7 @@ public class NestService {
         return LocalDateTime.now().format(TS);
     }
 
-    // ------------------------------------------------------------------ perfis
+
 
     public ChildProfile addChild(String name, int age) {
         ChildProfile v = new ChildProfile(0, name, age);
@@ -70,9 +78,7 @@ public class NestService {
         execute("DELETE FROM children WHERE id=?", "Falha ao remover perfil.", childId);
     }
 
-    // ---------------------------------------------------------------- vínculos
 
-    /** Registra um vínculo local. Nenhuma conta externa é conectada e nenhuma senha é solicitada. */
     public PlatformLink linkPlatform(int childId, String platform, String accountLabel) {
         requireChild(childId);
         if (platform == null || platform.isBlank() || accountLabel == null || accountLabel.isBlank())
@@ -125,7 +131,7 @@ public class NestService {
                 "Falha ao atualizar sincronização.", now(), linkId);
     }
 
-    // --------------------------------------------------------------------- uso
+
 
     public void addUsage(int childId, String platform, LocalDate date, int minutes) {
         addUsage(childId, platform, date, minutes, "MANUAL");
@@ -149,7 +155,7 @@ public class NestService {
         checkLimits(childId, v.platform(), date);
     }
 
-    /** Substitui o dado simulado de um dia (evita duplicar ao sincronizar mais de uma vez). */
+
     public void replaceSimulatedUsage(int childId, String platform, LocalDate date, int minutes) {
         requireChild(childId);
         execute("DELETE FROM usage_sessions WHERE child_id=? AND platform=? AND date=? AND source='SIMULADO'",
@@ -176,7 +182,7 @@ public class NestService {
         }
     }
 
-    /** Minutos por dia entre as datas (inclusive); dias sem uso aparecem com 0. */
+
     public Map<LocalDate, Integer> minutesByDay(int childId, LocalDate from, LocalDate to) {
         Map<LocalDate, Integer> out = new LinkedHashMap<>();
         for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) out.put(d, 0);
@@ -195,7 +201,7 @@ public class NestService {
         }
     }
 
-    /** Minutos por plataforma no período, da maior para a menor. */
+
     public Map<String, Integer> minutesByPlatform(int childId, LocalDate from, LocalDate to) {
         Map<String, Integer> out = new LinkedHashMap<>();
         try (Connection c = Database.connect();
@@ -235,9 +241,9 @@ public class NestService {
         }
     }
 
-    // ------------------------------------------------------------------ alertas
 
-    /** @param childId perfil ou {@code null} para todos os perfis do responsável */
+
+
     public List<Alert> listAlerts(Integer childId) {
         String sql = "SELECT a.id,a.child_id,c.name,a.platform,a.message,a.created_at,a.is_read FROM alerts a "
                 + "JOIN children c ON c.id=a.child_id WHERE c.guardian_id=?" + (childId != null ? " AND a.child_id=?" : "")
@@ -275,7 +281,7 @@ public class NestService {
         }
     }
 
-    /** Gera alerta (uma vez por perfil/plataforma/dia) quando o limite diário configurado é excedido. */
+
     private void checkLimits(int childId, String platform, LocalDate date) {
         for (String scope : new String[]{platform, ALL}) {
             Integer limit = dailyLimit(childId, scope);
@@ -291,9 +297,7 @@ public class NestService {
         }
     }
 
-    // ------------------------------------------------------------ configurações
 
-    /** Limite diário em minutos para a plataforma (ou {@link #ALL}); {@code null} se não houver. */
     public Integer dailyLimit(int childId, String platform) {
         try (Connection c = Database.connect();
              PreparedStatement p = c.prepareStatement("SELECT minutes FROM limits WHERE child_id=? AND platform=?")) {
@@ -307,10 +311,7 @@ public class NestService {
         }
     }
 
-    /**
-     * Registra uma solicitação de configuração. Ela NÃO é enviada ao fabricante (status SIMULADO); o limite diário,
-     * porém, é guardado localmente e passa a gerar alertas do Nest.
-     */
+
     public SettingRequest requestSetting(int childId, String platform, String setting, String value) {
         requireChild(childId);
         if (platform == null || platform.isBlank()) throw new IllegalArgumentException("Escolha a plataforma.");
@@ -368,7 +369,7 @@ public class NestService {
         }
     }
 
-    // ------------------------------------------------------------------ helpers
+
 
     private void requireChild(int childId) {
         try (Connection c = Database.connect();

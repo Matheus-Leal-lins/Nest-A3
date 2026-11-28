@@ -24,7 +24,6 @@ import br.com.nest.model.ChildProfile;
 import br.com.nest.model.UsageSession;
 import br.com.nest.service.NestService;
 
-/** Relatórios e gráficos: uso por dia, distribuição por serviço, comparação com o período anterior e exportação CSV. */
 class ReportsScreen extends Screen {
     private static final int[] RANGE = {7, 14, 30};
 

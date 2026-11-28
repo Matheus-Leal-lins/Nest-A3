@@ -25,7 +25,7 @@ import br.com.nest.model.Platforms;
 import br.com.nest.model.UsageSession;
 import br.com.nest.service.NestService;
 
-/** Detalhes por serviço/período e lançamento manual de uso. */
+
 class DetailsScreen extends Screen {
     private static final String[] PERIODS = {"Hoje", "Últimos 7 dias", "Últimos 30 dias"};
     private static final int[] DAYS = {0, 6, 29};

@@ -62,7 +62,6 @@ final class Ui {
     private static final Color D_MUTED = new Color(0x94A3B8);
     private static final Color D_DANGER = new Color(0xF87171);
 
-    // Constantes mantidas para compatibilidade
     static final Color PRIMARY = L_PRIMARY;
  @SuppressWarnings("unused") static final Color PRIMARY_DARK = L_PRIMARY_DARK; 
  @SuppressWarnings("unused")  static final Color PRIMARY_SOFT = L_PRIMARY_SOFT;

@@ -17,7 +17,7 @@ import javax.crypto.spec.PBEKeySpec;
 import br.com.nest.model.Guardian;
 import br.com.nest.repository.Database;
 
-/** Cadastro e login locais do responsável. Senhas são guardadas com PBKDF2 + sal (nunca em texto puro). */
+
 public class AuthService {
     private static final int ITERATIONS = 65_536;
 
@@ -43,7 +43,7 @@ public class AuthService {
                     id = r.getInt(1);
                 }
             }
-            // Perfis criados pela versão anterior (sem responsável) passam para a primeira conta criada.
+
             try (PreparedStatement p = c.prepareStatement("UPDATE children SET guardian_id=? WHERE guardian_id IS NULL")) {
                 p.setInt(1, id);
                 p.executeUpdate();
