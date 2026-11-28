@@ -1,0 +1,160 @@
+================================================================================
+TESTES FUNCIONAIS MANUAIS - SISTEMA NEST (CONTROLE PARENTAL)
+================================================================================
+
+1. EXECUCAO DOS CASOS DE TESTE
+--------------------------------------------------------------------------------
+
+[CT-01] RF01 - Login e criacao de conta do responsavel
+- Pre-condicoes: Aplicacao NEST iniciada na tela de autenticacao.
+- Entradas / Passos:
+  1. Alternar para "Criar conta"
+  2. Informar nome, usuario (snil_teste), data de nascimento valida (18+) e senha (123456)
+  3. Confirmar criacao
+- Resultado Esperado: Conta criada com seguranca (hash + sal) e acesso liberado a janela principal do NEST.
+- Resultado Obtido: Conta criada e sessao iniciada na janela principal (NestFrame).
+- Status: Passou
+- Evidencia: Tela principal exibida com o usuario logado no canto superior direito.
+--------------------------------------------------------------------------------
+
+[CT-02] RF02 - Cadastrar perfil de crianca valido
+- Pre-condicoes: Responsavel autenticado no NEST.
+- Entradas / Passos:
+  1. Clicar em "+ Perfil"
+  2. Nome: Ana
+  3. Idade: 10
+  4. Confirmar
+- Resultado Esperado: Perfil "Ana - 10 anos" criado, salvo e selecionado na barra de perfis.
+- Resultado Obtido: Perfil cadastrado e exibido na barra de perfis e no seletor.
+- Status: Passou
+- Evidencia: Pilha "Ana - 10 anos" exibida na barra superior de perfis.
+--------------------------------------------------------------------------------
+
+[CT-03] RF02 - Bloquear perfil com idade fora da faixa (0-17)
+- Pre-condicoes: Responsavel autenticado no NEST.
+- Entradas / Passos:
+  1. Clicar em "+ Perfil"
+  2. Nome: Adulto
+  3. Tentar informar idade 18 ou -1
+- Resultado Esperado: Impedir cadastro de idade fora do intervalo de 0 a 17 anos.
+- Resultado Obtido: Spinner/validacao limita a idade entre 0 e 17 anos.
+- Status: Passou
+- Evidencia: Campo de idade nao aceita valores fora da faixa 0-17.
+--------------------------------------------------------------------------------
+
+[CT-04] RF03 - Vincular servico / plataforma ao perfil
+- Pre-condicoes: Perfil Ana selecionado.
+- Entradas / Passos:
+  1. Ir na aba "Servicos"
+  2. Clicar em "Vincular"
+  3. Escolher "Nintendo Switch" e rotulo "Perfil Ana (Switch)"
+  4. Confirmar
+- Resultado Esperado: Vinculo registrado com status SIMULADO e exibido na tabela de servicos.
+- Resultado Obtido: Vinculo salvo e listado com status SIMULADO.
+- Status: Passou
+- Evidencia: Linha "Nintendo Switch | Perfil Ana (Switch) | SIMULADO" na tabela.
+--------------------------------------------------------------------------------
+
+[CT-05] RF03 - Impedir vinculo duplicado da mesma plataforma
+- Pre-condicoes: Nintendo Switch ja vinculado ao perfil Ana.
+- Entradas / Passos:
+  1. Na aba "Servicos", clicar em "Vincular"
+  2. Tentar vincular Nintendo Switch novamente para Ana
+- Resultado Esperado: Exibir aviso informando que o perfil ja possui vinculo com a plataforma.
+- Resultado Obtido: Bloqueou a duplicidade e exibiu mensagem de atencao ao usuario.
+- Status: Passou
+- Evidencia: Alerta: "Este perfil ja possui vinculo com Nintendo Switch."
+--------------------------------------------------------------------------------
+
+[CT-06] RF04 - Sincronizar dados de uso (simulado)
+- Pre-condicoes: Perfil Ana com pelo menos 1 servico vinculado.
+- Entradas / Passos:
+  1. Clicar em "Sincronizar" (no topo ou na aba "Servicos")
+- Resultado Esperado: Gerar sessoes simuladas dos ultimos 7 dias e atualizar last_sync do vinculo.
+- Resultado Obtido: Sessoes simuladas registradas e horario de sincronizacao atualizado.
+- Status: Passou
+- Evidencia: Coluna "Sincronizacao" atualizada com data/hora e graficos preenchidos.
+--------------------------------------------------------------------------------
+
+[CT-07] RF05 - Registrar uso manual e validar data futura
+- Pre-condicoes: Perfil Ana selecionado.
+- Entradas / Passos:
+  1. Ir na aba "Detalhes"
+  2. Clicar em "Registrar uso manual"
+  3. Informar servico, data de hoje (30 min) e depois testar uma data futura
+- Resultado Esperado: Aceitar uso valido e bloquear datas futuras com mensagem de aviso.
+- Resultado Obtido: Uso valido somado ao total e data futura bloqueada.
+- Status: Passou
+- Evidencia: Total do periodo atualizado; data futura exibe aviso de validacao.
+--------------------------------------------------------------------------------
+
+[CT-08] RF06 - Definir limite diario e gerar alerta ao exceder
+- Pre-condicoes: Perfil Ana selecionado.
+- Entradas / Passos:
+  1. Ir na aba "Configuracoes"
+  2. Selecionar "Limite diario (minutos)", valor 60 e salvar
+  3. Registrar 75 min de uso no mesmo dia em "Detalhes"
+- Resultado Esperado: Salvar limite e gerar alerta automatico por exceder o limite diario sem duplicar no mesmo dia.
+- Resultado Obtido: Limite salvo, alerta gerado e contador na aba "Alertas" incrementado.
+- Status: Passou
+- Evidencia: Aba "Alertas (1)" exibida com mensagem de limite excedido.
+--------------------------------------------------------------------------------
+
+[CT-09] RF06 - Marcar alertas como lidos
+- Pre-condicoes: Perfil Ana com alerta nao lido (Alertas (1)).
+- Entradas / Passos:
+  1. Abrir a aba "Alertas"
+  2. Clicar em "Marcar todos como lidos"
+- Resultado Esperado: Alterar situacao de "Novo" para "Lido" e zerar contador de nao lidos.
+- Resultado Obtido: Alertas marcados como "Lido" e titulo da aba voltou para "Alertas".
+- Status: Passou
+- Evidencia: Situacao alterada para "Lido" e contador de nao lidos zerado.
+--------------------------------------------------------------------------------
+
+[CT-10] RF07 - Exportar relatorio em CSV e visualizar graficos
+- Pre-condicoes: Perfil Ana com dados de uso registrados.
+- Entradas / Passos:
+  1. Ir na aba "Relatorios"
+  2. Alternar periodo (7 dias / 14 dias / 30 dias)
+  3. Clicar em "Exportar CSV" e salvar arquivo
+- Resultado Esperado: Atualizar graficos e resumo, e gerar arquivo .csv com os registros do periodo.
+- Resultado Obtido: Graficos e resumo atualizados; arquivo .csv salvo no disco com separador ";".
+- Status: Passou
+- Evidencia: Arquivo "nest-ana-2026-11-27.csv" criado e confirmacao exibida.
+--------------------------------------------------------------------------------
+
+[CT-11] RF08 - Remover perfil e dados vinculados em cascata
+- Pre-condicoes: Perfil Bia cadastrado com vinculos, uso ou alertas.
+- Entradas / Passos:
+  1. Selecionar perfil Bia
+  2. Clicar em "Remover" e confirmar
+- Resultado Esperado: Remover o perfil e apagar registros dependentes sem deixar dados orfaos.
+- Resultado Obtido: Perfil removido da barra/seletor e telas atualizadas sem erro.
+- Status: Passou
+- Evidencia: Perfil Bia removido e painel atualizado para o proximo perfil ou vazio.
+--------------------------------------------------------------------------------
+
+
+2. ANALISE DE DEFEITOS E PONTOS DE ATENCAO NO NEST
+--------------------------------------------------------------------------------
+
+1) Campos extras no cadastro de responsavel sem persistencia real (LoginFrame vs AuthService)
+   - Descricao: O formulario de criacao de conta solicita Nome e Data de nascimento
+     (com mascara automatica e validacao de 18+ anos), mas ao salvar envia apenas
+     user e pass para AuthService.register(user, pass), nao gravando nome nem
+     data de nascimento do responsavel.
+   - Impacto: O usuario preenche dados que nao sao salvos nem exibidos posteriormente na conta.
+
+2) Solicitacao de "Horario de descanso" registrada sem efeito de alerta/regra (NestService.requestSetting)
+   - Descricao: Na aba Configuracoes, e possivel salvar solicitacoes de Horario de
+     descanso (ex.: 21:00-07:00), mas a verificacao automatica de regras (checkLimits)
+     avalia apenas Limite diario (minutos), sem validar ou alertar sobre horario de descanso.
+   - Impacto: O responsavel registra o horario de descanso, mas o sistema nao gera
+     nenhum aviso ou bloqueio associado a ele.
+
+3) Transicao gradual de banco de dados entre SQLite (nest.db) e MySQL
+   - Descricao: O projeto opera localmente com SQLite (nest.db) e esta em processo
+     de adaptacao para MySQL, o que exige atencao em consultas e comandos especificos
+     de dialeto (como ON CONFLICT ... DO UPDATE e INSERT OR IGNORE) durante a migracao.
+   - Impacto: Queries escritas exclusivamente com sintaxe SQLite precisam ser
+     adaptadas quando o destino for MySQL.
