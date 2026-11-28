@@ -1,0 +1,6 @@
+br\com\nest\service\NestServiceTest.class
+br\com\nest\service\AuthServiceTest.class
+br\com\nest\model\UsageSessionTest.class
+br\com\nest\model\ChildProfileTest.class
+br\com\nest\service\UsageReportIT.class
+br\com\nest\service\UsageReportTest.class

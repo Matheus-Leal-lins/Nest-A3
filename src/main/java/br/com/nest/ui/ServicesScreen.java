@@ -47,7 +47,7 @@ class ServicesScreen extends Screen {
         JButton link = Ui.primaryButton("Vincular");
         JButton unlink = Ui.button("Desvincular");
         JButton sync = Ui.button("Sincronizar");
-        JButton open = Ui.button("Abrir original");
+        JButton open = Ui.button("Ir para a Origem");
 
         link.addActionListener(e -> Ui.safe(this, this::addLink));
         unlink.addActionListener(e -> Ui.safe(this, this::removeLink));
